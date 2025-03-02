@@ -2,6 +2,14 @@ const users = require("../data/users");
 
 const swipes = [];
 
+/**
+ * Registra un "swipe" (like o dislike) de un usuario hacia otro.
+ * Si ambos usuarios se han dado "like", se considera un match.
+ *
+ * @param {Object} req - Solicitud de Express con los datos del swipe (userId, targetUserId, action).
+ * @param {Object} res - Respuesta de Express.
+ * @returns {Object} JSON con el estado del swipe y si hay un match.
+ */
 const registerSwipe = (req, res) => {
     const { userId, targetUserId, action } = req.body;
 
@@ -29,6 +37,15 @@ const registerSwipe = (req, res) => {
     });
 };
 
+
+/**
+ * Obtiene la lista de matches de un usuario.
+ * Un match ocurre cuando dos usuarios se han dado "like" mutuamente.
+ *
+ * @param {Object} req - Solicitud de Express con userId en query.
+ * @param {Object} res - Respuesta de Express.
+ * @returns {Object} JSON con la lista de usuarios que han hecho match.
+ */
 const getMatches = (req, res) => {
     const { userId } = req.query;
 

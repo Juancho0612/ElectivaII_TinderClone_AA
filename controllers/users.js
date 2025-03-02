@@ -1,5 +1,10 @@
 const users = require("../data/users");
 
+/**
+ * Obtiene la lista de usuarios si las credenciales son correctas.
+ * @param {Object} req - Solicitud de Express con parámetros de autenticación.
+ * @param {Object} res - Respuesta de Express.
+ */
 const getUsers = (req, res) => {
   const username = req.query.username;
   const password = req.query.password;
@@ -18,6 +23,12 @@ const getUsers = (req, res) => {
   res.status(200).json(users);
 };
 
+/**
+ * Crea un nuevo usuario si el email, username y teléfono no están registrados.
+ * @param {Object} req - Solicitud de Express.
+ * @param {Object} req.body - Datos del usuario.
+ * @param {Object} res - Respuesta de Express.
+ */
 const createUser = (req, res) => {
   const body = req.body;
 
@@ -68,6 +79,14 @@ const createUser = (req, res) => {
   });
 };
 
+
+/**
+ * Obtiene un usuario por su ID si las credenciales son correctas.
+ * @param {Object} req - Solicitud de Express.
+ * @param {Object} req.params - Parámetros de la URL.
+ * @param {Object} req.query - Parámetros de autenticación.
+ * @param {Object} res - Respuesta de Express.
+ */
 const getuser = (req, res) => {
   const id = req.params.id;
 
@@ -97,6 +116,12 @@ const getuser = (req, res) => {
   res.status(200).json(user);
 };
 
+/**
+ * Autentica a un usuario con su nombre de usuario y contraseña.
+ * @param {Object} req - Solicitud de Express.
+ * @param {Object} req.body - Datos de autenticación.
+ * @param {Object} res - Respuesta de Express.
+ */
 const login = (req, res) => {
   const body = req.body;
 
