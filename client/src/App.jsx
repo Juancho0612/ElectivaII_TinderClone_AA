@@ -11,13 +11,11 @@ import { Toaster } from "react-hot-toast";
 function App() {
 	const { checkAuth, authUser, checkingAuth } = useAuthStore();
 
-	// Verificar autenticación al montar el componente
 	useEffect(() => {
 		checkAuth();
 	}, [checkAuth]);
 
-	// Mientras se verifica la autenticación, no renderizar nada
-	if (checkingAuth) return <div>Loading...</div>; // O un spinner de carga
+	if (checkingAuth) return <div>Loading...</div>; 
 
 	return (
 		<div className="App">

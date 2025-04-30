@@ -13,21 +13,24 @@ export const useMessageStore = create((set) => ({
       set((state) => ({
         messages: [
           ...state.messages,
-          { _id: Date.now(), sender: useAuthStore.getState().authUser._id, content },
+          {
+            _id: Date.now(),
+            sender: useAuthStore.getState().authUser._id,
+            content,
+          },
         ],
       }));
 
       const token = localStorage.getItem("jwt");
-      const res = await axiosInstance.post(
+      await axiosInstance.post(
         "/messages/send",
         { receiverId, content },
         {
           headers: {
-            Authorization: `Bearer ${token}`, 
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log("message sent", res.data);
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
@@ -46,7 +49,7 @@ export const useMessageStore = create((set) => ({
 
       set({ messages: res.data.messages });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       set({ messages: [] });
     } finally {
       set({ loading: false });
@@ -54,14 +57,28 @@ export const useMessageStore = create((set) => ({
   },
 
   subscribeToMessages: () => {
-    const socket = getSocket();
+    let socket;
+    try {
+      socket = getSocket();
+    } catch (error) {
+      console.warn("⚠️ No se pudo suscribir: el socket aún no está inicializado: ", error);
+      return;
+    }
+
     socket.on("newMessage", ({ message }) => {
-      set((state) => ({ messages: [...state.messages, message] }));
+      set((state) => ({
+        messages: [...state.messages, message],
+      }));
     });
   },
 
   unsubscribeFromMessages: () => {
-    const socket = getSocket();
-    socket.off("newMessage");
+    let socket;
+    try {
+      socket = getSocket();
+      socket.off("newMessage");
+    } catch (error) {
+      console.warn("⚠️ No se pudo desuscribir: el socket no estaba inicializado: ", error);
+    }
   },
 }));
