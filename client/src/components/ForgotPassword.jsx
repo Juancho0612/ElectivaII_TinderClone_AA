@@ -1,38 +1,16 @@
 import { useState } from "react";
-import Swal from "sweetalert2";
 import Modal from "./Modal";
+import { useAuthStore } from "../store/useAuthStore"; 
+
 
 function ForgotPassword({ isOpen, onClose }) {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { forgotPassword, loading } = useAuthStore(); 
 
-  const handleSendReset = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        Swal.fire("¡Éxito!", data.message, "success");
-        onClose();
-      } else {
-        Swal.fire("Error", data.message, "error");
-      }
-    } catch (error) {
-      console.error("Error al enviar solicitud:", error);
-      Swal.fire("Error", "Ocurrió un problema al enviar el correo.", "error");
-    } finally {
-      setLoading(false);
-    }
+    forgotPassword(email);  
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -42,7 +20,7 @@ function ForgotPassword({ isOpen, onClose }) {
       <h2 className="text-lg font-semibold text-gray-700 mb-4">
         Recuperar contraseña
       </h2>
-      <form onSubmit={handleSendReset} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
             htmlFor="reset-email"
