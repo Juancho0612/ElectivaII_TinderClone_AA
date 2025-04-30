@@ -15,7 +15,13 @@ function App() {
 		checkAuth();
 	}, [checkAuth]);
 
-	if (checkingAuth) return <div>Loading...</div>; 
+	if (checkingAuth) {
+		return (
+			<div className="flex justify-center items-center min-h-screen">
+				<span className="text-xl font-semibold text-gray-600 animate-pulse">Cargando...</span>
+			</div>
+		);
+	}
 
 	return (
 		<div className="App">

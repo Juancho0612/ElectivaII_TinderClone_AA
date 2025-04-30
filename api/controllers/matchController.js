@@ -161,13 +161,6 @@ export const getUserProfiles = async (req, res) => {
       ],
     });
 
-    if (users.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No hay perfiles disponibles en este momento.",
-      });
-    }
-
     res.status(200).json({
       success: true,
       users,
