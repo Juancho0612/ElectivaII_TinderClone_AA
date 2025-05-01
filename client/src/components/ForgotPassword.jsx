@@ -1,15 +1,15 @@
 import { useState } from "react";
 import Modal from "./Modal";
-import { useAuthStore } from "../store/useAuthStore"; 
-
+import { useAuthStore } from "../store/useAuthStore";
+import { ClipLoader } from "react-spinners"; // Importar el spinner
 
 function ForgotPassword({ isOpen, onClose }) {
   const [email, setEmail] = useState("");
-  const { forgotPassword, loading } = useAuthStore(); 
+  const { forgotPassword, loading } = useAuthStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    forgotPassword(email);  
+    await forgotPassword(email);
     onClose();
   };
 
@@ -53,7 +53,14 @@ function ForgotPassword({ isOpen, onClose }) {
               : "bg-pink-600 hover:bg-pink-700"
               }`}
           >
-            {loading ? "Enviando..." : "Enviar enlace"}
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <ClipLoader size={20} color="#ffffff" loading={loading} />
+                Enviando...
+              </div>
+            ) : (
+              "Enviar enlace"
+            )}
           </button>
         </div>
       </form>

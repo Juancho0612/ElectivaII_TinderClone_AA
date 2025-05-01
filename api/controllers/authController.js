@@ -149,7 +149,7 @@ export const resetPassword = async (req, res) => {
     const timestamp = Date.now();
     const tokenPayload = JSON.stringify({ email: user.email, timestamp });
     const resetToken = Buffer.from(tokenPayload).toString("base64");
-    const resetLink = `${process.env.CLIENT_URL}/auth/reset-password/${resetToken}`;
+    const resetLink = `${process.env.CLIENT_URL}/auth/change-password/${encodeURIComponent(resetToken)}`;
 
     await sendPasswordResetEmail(user.email, resetLink);
 

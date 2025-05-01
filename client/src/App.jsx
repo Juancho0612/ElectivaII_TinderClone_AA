@@ -7,6 +7,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
 import { Toaster } from "react-hot-toast";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 function App() {
 	const { checkAuth, authUser, checkingAuth } = useAuthStore();
@@ -27,6 +28,7 @@ function App() {
 		<div className="App">
 			<Routes>
 				<Route path="/" element={<HomePage />} />
+				<Route path="/auth/change-password/:token" element={<ChangePasswordPage />} />
 				<Route
 					path="/home"
 					element={authUser ? <LoginPage /> : <Navigate to="/auth" />}

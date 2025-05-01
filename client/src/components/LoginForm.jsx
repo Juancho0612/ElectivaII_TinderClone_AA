@@ -8,8 +8,8 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading } = useAuthStore();
-  const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isResetOpen, setIsResetOpen] = useState(false);
 
   return (
     <div>
@@ -81,11 +81,7 @@ function LoginForm() {
         </div>
 
         <p className="text-sm text-right">
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="text-pink-600 hover:text-pink-500"
-          >
+          <button onClick={() => setIsResetOpen(true)} type="button" className="text-sm text-pink-600 hover:underline">
             ¿Olvidaste tu contraseña?
           </button>
         </p>
@@ -103,10 +99,8 @@ function LoginForm() {
         </button>
       </form>
 
-      <ForgotPassword
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-      />
+      <ForgotPassword isOpen={isResetOpen} onClose={() => setIsResetOpen(false)} />
+
     </div>
   );
 }
