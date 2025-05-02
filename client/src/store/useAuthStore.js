@@ -11,20 +11,20 @@ export const useAuthStore = create((set) => ({
   signUp: async (data) => {
     try {
       await axiosInstance.post("/auth/signup", data);
-
+  
       toast.success("Usuario creado con éxito", {
         duration: 4000,
         position: "top-right",
       });
     } catch (error) {
       let errMsg = "Error al crear el usuario";
-
+      console.log(error);
       if (
-        error?.response?.data?.message?.includes("correo ya está registrado")
+        error?.response?.data?.message === "El correo eletronico ya existe"
       ) {
         errMsg = "Este correo ya está registrado";
       }
-
+  
       toast.error(errMsg, {
         duration: 4000,
         position: "top-right",

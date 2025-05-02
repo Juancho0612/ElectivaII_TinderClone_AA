@@ -26,7 +26,6 @@ export const swipeRight = async (req, res) => {
       currentUser.likes.push(likedUserId);
       await currentUser.save();
 
-      // Si el usuario 'likedUser' también ha dado like a 'currentUser', hacemos un match
       if (likedUser.likes.includes(currentUser.id)) {
         currentUser.matches.push(likedUserId);
         likedUser.matches.push(currentUser.id);

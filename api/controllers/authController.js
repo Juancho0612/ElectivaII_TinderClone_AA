@@ -97,14 +97,24 @@ export const login = async (req, res) => {
     }
 
     const user = await User.findOne({ email }).select("+password");
-    if (!user || !(await user.matchPassword(password))) {
+    if (!user) {
       return res.status(401).json({
         success: false,
         message: "Correo o contraseña invalidos",
       });
     }
 
-    const token = signToken(user._id);
+    const isPasswordValid = await user.matchPassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Correo o contraseña invalidos",
+      });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "2d",
+    });
 
     res.status(200).json({
       success: true,
@@ -112,7 +122,7 @@ export const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log("Error en el login del controlador:", error);
+    console.error("Error en el login del controlador:", error);
     res.status(500).json({ success: false, message: "Error en el servidor" });
   }
 };
@@ -149,7 +159,9 @@ export const resetPassword = async (req, res) => {
     const timestamp = Date.now();
     const tokenPayload = JSON.stringify({ email: user.email, timestamp });
     const resetToken = Buffer.from(tokenPayload).toString("base64");
-    const resetLink = `${process.env.CLIENT_URL}/auth/change-password/${encodeURIComponent(resetToken)}`;
+    const resetLink = `${
+      process.env.CLIENT_URL
+    }/auth/change-password/${encodeURIComponent(resetToken)}`;
 
     await sendPasswordResetEmail(user.email, resetLink);
 
@@ -180,8 +192,17 @@ export const updatePassword = async (req, res) => {
       return res.status(400).json({ success: false, message: "Faltan datos." });
     }
 
-    const decoded = Buffer.from(resetToken, "base64").toString("utf-8");
-    const { email, timestamp } = JSON.parse(decoded);
+    let decoded;
+    try {
+      decoded = Buffer.from(resetToken, "base64").toString("utf-8");
+      decoded = JSON.parse(decoded);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Token inválido." });
+    }
+
+    const { email, timestamp } = decoded;
 
     if (!email || !timestamp) {
       return res
@@ -203,9 +224,7 @@ export const updatePassword = async (req, res) => {
         .json({ success: false, message: "Usuario no encontrado." });
     }
 
-    user.password = newPassword; 
-    await user.save();
-
+    user.password = newPassword;
     await user.save();
 
     return res.status(200).json({

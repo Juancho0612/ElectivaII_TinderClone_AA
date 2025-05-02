@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import { useAuthStore } from "../store/useAuthStore";
-import { ClipLoader } from "react-spinners"; // Importar el spinner
+import { ClipLoader } from "react-spinners";
 
 function ForgotPassword({ isOpen, onClose }) {
   const [email, setEmail] = useState("");
