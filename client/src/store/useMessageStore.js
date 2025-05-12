@@ -31,6 +31,8 @@ export const useMessageStore = create((set) => ({
           },
         }
       );
+
+      toast.success("Message sent!");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
@@ -61,7 +63,10 @@ export const useMessageStore = create((set) => ({
     try {
       socket = getSocket();
     } catch (error) {
-      console.warn("⚠️ No se pudo suscribir: el socket aún no está inicializado: ", error);
+      console.warn(
+        "⚠️ No se pudo suscribir: el socket aún no está inicializado: ",
+        error
+      );
       return;
     }
 
@@ -69,6 +74,12 @@ export const useMessageStore = create((set) => ({
       set((state) => ({
         messages: [...state.messages, message],
       }));
+
+      // ✅ Mostrar toast al receptor
+      const currentUserId = useAuthStore.getState().authUser?._id;
+      if (message.sender !== currentUserId) {
+        toast.success(`Nuevo mensaje de ${message.senderName || "alguien"}`);
+      }
     });
   },
 
@@ -78,7 +89,10 @@ export const useMessageStore = create((set) => ({
       socket = getSocket();
       socket.off("newMessage");
     } catch (error) {
-      console.warn("⚠️ No se pudo desuscribir: el socket no estaba inicializado: ", error);
+      console.warn(
+        "⚠️ No se pudo desuscribir: el socket no estaba inicializado: ",
+        error
+      );
     }
   },
 }));
