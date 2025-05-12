@@ -75,7 +75,6 @@ export const useMessageStore = create((set) => ({
         messages: [...state.messages, message],
       }));
 
-      // ✅ Mostrar toast al receptor
       const currentUserId = useAuthStore.getState().authUser?._id;
       if (message.sender !== currentUserId) {
         toast.success(`Nuevo mensaje de ${message.senderName || "alguien"}`);
