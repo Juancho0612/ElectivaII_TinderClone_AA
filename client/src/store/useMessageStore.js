@@ -3,6 +3,7 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { getSocket } from "../socket/socket.client";
 import { useAuthStore } from "./useAuthStore";
+import showBigToast from "../components/showBigToast";
 
 export const useMessageStore = create((set) => ({
   messages: [],
@@ -77,7 +78,8 @@ export const useMessageStore = create((set) => ({
 
       const currentUserId = useAuthStore.getState().authUser?._id;
       if (message.sender !== currentUserId) {
-        toast.success(`Nuevo mensaje de ${message.senderName || "alguien"}`);
+        console.log(message);
+        showBigToast(`Nuevo mensaje. ${message.content}`);
       }
     });
   },
