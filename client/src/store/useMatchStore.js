@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { getSocket } from "../socket/socket.client";
+import showBigToast from "../components/showBigToast";
 
 export const useMatchStore = create((set) => ({
   matches: [],
@@ -94,7 +95,7 @@ export const useMatchStore = create((set) => ({
         set((state) => ({
           matches: [...state.matches, newMatch],
         }));
-        toast.success("You got a new match!");
+        showBigToast("You got a new match!");
       });
     } catch (error) {
       console.log(error);
