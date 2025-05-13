@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
+import { CheckCircle, XCircle, Flame } from "lucide-react";
 
 const playSound = () => {
   const audio = new Audio("/sounds/notification.mp3");
@@ -9,9 +10,10 @@ const playSound = () => {
 
 const showBigToast = (message, type = "success") => {
   confetti({
-    particleCount: 100,
-    spread: 70,
+    particleCount: 80,
+    spread: 60,
     origin: { y: 0.6 },
+    colors: ["#FF5864", "#FFB6C1", "#FFD1DC"],
   });
 
   playSound();
@@ -20,15 +22,16 @@ const showBigToast = (message, type = "success") => {
     (t) => (
       <div
         className={`${
-          type === "success" ? "bg-green-600" : "bg-red-600"
-        } text-white px-6 py-5 rounded-xl shadow-2xl border-4 border-white w-[350px] sm:w-[450px] font-semibold flex items-center justify-between space-x-3 animate-fade-in ${
           t.visible ? "opacity-100" : "opacity-0"
-        }`}
+        } transition-opacity duration-300 bg-white border border-[#FFB6C1] shadow-xl rounded-xl px-6 py-5 w-[350px] sm:w-[420px] flex items-center space-x-4`}
       >
-        <div className="flex items-center space-x-3">
-          <span className="text-3xl">{type === "success" ? "🎉" : "⚠️"}</span>
-          <div className="text-lg">{message}</div>
+        <div className="text-[#FF5864]">
+          {type === "success" && <CheckCircle size={32} />}
+          {type === "error" && <XCircle size={32} />}
+          {type === "notify" && <Flame size={32} />}
         </div>
+
+        <div className="flex-1 text-gray-800 text-base font-medium">{message}</div>
       </div>
     ),
     { duration: 5000 }

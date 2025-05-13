@@ -56,11 +56,15 @@ export const useMatchStore = create((set) => ({
       set({ swipeFeedback: "passed" });
 
       const token = localStorage.getItem("jwt");
-      await axiosInstance.post(`/matches/swipe-left/${user._id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
-      });
+      await axiosInstance.post(
+        `/matches/swipe-left/${user._id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
       console.log(error);
       toast.error("Failed to swipe left");
@@ -74,11 +78,15 @@ export const useMatchStore = create((set) => ({
       set({ swipeFeedback: "liked" });
 
       const token = localStorage.getItem("jwt");
-      await axiosInstance.post(`/matches/swipe-right/${user._id}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axiosInstance.post(
+        `/matches/swipe-right/${user._id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
       console.log(error);
       toast.error("Failed to swipe right");
@@ -95,7 +103,7 @@ export const useMatchStore = create((set) => ({
         set((state) => ({
           matches: [...state.matches, newMatch],
         }));
-        showBigToast("You got a new match!");
+        showBigToast("🔥 ¡Tienes un nuevo match!", "success");
       });
     } catch (error) {
       console.log(error);

@@ -76,10 +76,11 @@ subscribeToMessages: () => {
     }));
 
     const currentUserId = useAuthStore.getState().authUser?._id;
+    const currentUserName = useAuthStore.getState().authUser?.name;
 
     if (message.sender !== currentUserId) {
       console.log("📥 Recibido mensaje de otro usuario:", message);
-      showBigToast(`Nuevo mensaje: ${message.content}`);
+      showBigToast(`Mensaje enviado de ${currentUserName}: ${message.content}`);
     }
   });
 },
