@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { disconnectSocket, initializeSocket } from "../socket/socket.client";
+import { useMessageStore } from "./useMessageStore";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
@@ -70,6 +71,7 @@ export const useAuthStore = create((set) => ({
       localStorage.removeItem("jwt");
       disconnectSocket();
       set({ authUser: null });
+      useMessageStore.getState().clearNotifications();
     } catch (error) {
       toast.error(error.response.data.message || "Something went wrong");
     }
