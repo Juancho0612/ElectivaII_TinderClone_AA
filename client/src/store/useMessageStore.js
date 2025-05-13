@@ -7,6 +7,7 @@ import showBigToast from "../components/showBigToast";
 
 export const useMessageStore = create((set) => ({
   messages: [],
+  notifications: [],
   loading: true,
 
   sendMessage: async (receiverId, content) => {
@@ -32,8 +33,6 @@ export const useMessageStore = create((set) => ({
           },
         }
       );
-
-      toast.success("Message sent!");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
@@ -59,32 +58,43 @@ export const useMessageStore = create((set) => ({
     }
   },
 
-subscribeToMessages: () => {
-  let socket;
-  try {
-    socket = getSocket();
-  } catch (error) {
-    console.warn("⚠️ Socket no inicializado:", error);
-    return;
-  }
-
-  socket.off("newMessage");
-
-  socket.on("newMessage", ({ message }) => {
-    set((state) => ({
-      messages: [...state.messages, message],
-    }));
-
-    const currentUserId = useAuthStore.getState().authUser?._id;
-    const currentUserName = useAuthStore.getState().authUser?.name;
-
-    if (message.sender !== currentUserId) {
-      console.log("📥 Recibido mensaje de otro usuario:", message);
-      showBigToast(`Mensaje enviado de ${currentUserName}: ${message.content}`);
+  subscribeToMessages: () => {
+    let socket;
+    try {
+      socket = getSocket();
+    } catch (error) {
+      console.warn("⚠️ Socket no inicializado:", error);
+      return;
     }
-  });
-},
 
+    socket.off("newMessage");
+
+    socket.on("newMessage", ({ message }) => {
+      set((state) => ({
+        messages: [...state.messages, message],
+      }));
+
+      const currentUserId = useAuthStore.getState().authUser?._id;
+      const currentUserName = useAuthStore.getState().authUser?.name;
+
+      if (message.sender !== currentUserId) {
+        set((state) => ({
+          notifications: [
+            ...state.notifications,
+            {
+              id: Date.now(),
+              type: "message",
+              sender: currentUserName,
+              content: message.content,
+            },
+          ],
+        }));
+        showBigToast(
+          `Mensaje enviado de ${currentUserName}: ${message.content}`
+        );
+      }
+    });
+  },
 
   unsubscribeFromMessages: () => {
     let socket;
@@ -97,5 +107,17 @@ subscribeToMessages: () => {
         error
       );
     }
+  },
+
+  removeNotification: (notificationId) => {
+    set((state) => ({
+      notifications: state.notifications.filter(
+        (notification) => notification.id !== notificationId
+      ),
+    }));
+  },
+
+  clearAllNotifications: () => {
+    set({ notifications: [] });
   },
 }));
