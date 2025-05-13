@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import  Header  from "../components/Header";
+import Header from "../components/Header";
 import { useAuthStore } from "../store/useAuthStore";
 import { useMatchStore } from "../store/useMatchStore";
 import { useMessageStore } from "../store/useMessageStore";
@@ -9,7 +9,7 @@ import MessageInput from "../components/MessageInput";
 
 const ChatPage = () => {
 	const { getMyMatches, matches, isLoadingMyMatches } = useMatchStore();
-	const { messages, getMessages, subscribeToMessages, unsubscribeFromMessages } = useMessageStore();
+	const { messages, getMessages, subscribeToMessages } = useMessageStore();
 	const { authUser } = useAuthStore();
 
 	const { id } = useParams();
@@ -22,11 +22,7 @@ const ChatPage = () => {
 			getMessages(id);
 			subscribeToMessages();
 		}
-
-		return () => {
-			unsubscribeFromMessages();
-		};
-	}, [getMyMatches, authUser, getMessages, subscribeToMessages, unsubscribeFromMessages, id]);
+	}, [authUser, id]);
 
 	if (isLoadingMyMatches) return <LoadingMessagesUI />;
 	if (!match) return <MatchNotFound />;
@@ -54,11 +50,10 @@ const ChatPage = () => {
 								className={`mb-3 ${msg.sender === authUser._id ? "text-right" : "text-left"}`}
 							>
 								<span
-									className={`inline-block p-3 rounded-lg max-w-xs lg:max-w-md ${
-										msg.sender === authUser._id
-											? "bg-pink-500 text-white"
-											: "bg-gray-200 text-gray-800"
-									}`}
+									className={`inline-block p-3 rounded-lg max-w-xs lg:max-w-md ${msg.sender === authUser._id
+										? "bg-pink-500 text-white"
+										: "bg-gray-200 text-gray-800"
+										}`}
 								>
 									{msg.content}
 								</span>

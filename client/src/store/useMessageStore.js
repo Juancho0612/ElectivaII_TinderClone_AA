@@ -59,30 +59,31 @@ export const useMessageStore = create((set) => ({
     }
   },
 
-  subscribeToMessages: () => {
-    let socket;
-    try {
-      socket = getSocket();
-    } catch (error) {
-      console.warn(
-        "⚠️ No se pudo suscribir: el socket aún no está inicializado: ",
-        error
-      );
-      return;
+subscribeToMessages: () => {
+  let socket;
+  try {
+    socket = getSocket();
+  } catch (error) {
+    console.warn("⚠️ Socket no inicializado:", error);
+    return;
+  }
+
+  socket.off("newMessage");
+
+  socket.on("newMessage", ({ message }) => {
+    set((state) => ({
+      messages: [...state.messages, message],
+    }));
+
+    const currentUserId = useAuthStore.getState().authUser?._id;
+
+    if (message.sender !== currentUserId) {
+      console.log("📥 Recibido mensaje de otro usuario:", message);
+      showBigToast(`Nuevo mensaje: ${message.content}`);
     }
+  });
+},
 
-    socket.on("newMessage", ({ message }) => {
-      set((state) => ({
-        messages: [...state.messages, message],
-      }));
-
-      const currentUserId = useAuthStore.getState().authUser?._id;
-      if (message.sender !== currentUserId) {
-        console.log(message);
-        showBigToast(`Nuevo mensaje. ${message.content}`);
-      }
-    });
-  },
 
   unsubscribeFromMessages: () => {
     let socket;
