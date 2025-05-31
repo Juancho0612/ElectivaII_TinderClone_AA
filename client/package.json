@@ -23,6 +23,7 @@
     "react-tinder-card": "^1.6.4",
     "socket.io-client": "^4.8.0",
     "sweetalert2": "^11.19.1",
+    "tinder-clone": "file:..",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {

@@ -7,14 +7,23 @@ import SwipeArea from "../components/SwipeArea";
 import SwipeFeedback from "../components/SwipeFeedback";
 import Logo from "/logo/logo.png";
 
-
 function LoginPage() {
-	const { isLoadingUserProfiles, getUserProfiles, userProfiles } =
-		useMatchStore();
+	const {
+		isLoadingUserProfiles,
+		getUserProfiles,
+		userProfiles,
+		subscribeToNewMatches,
+		unsubscribeFromNewMatches,
+	} = useMatchStore();
 
 	useEffect(() => {
 		getUserProfiles();
-	}, [getUserProfiles]);
+		subscribeToNewMatches();
+
+		return () => {
+			unsubscribeFromNewMatches();
+		};
+	}, [getUserProfiles, subscribeToNewMatches, unsubscribeFromNewMatches]);
 
 	return (
 		<div
@@ -39,7 +48,6 @@ function LoginPage() {
 
 					{isLoadingUserProfiles && <LoadingUI />}
 
-					
 				</main>
 			</div>
 		</div>

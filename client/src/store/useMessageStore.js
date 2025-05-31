@@ -3,9 +3,11 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { getSocket } from "../socket/socket.client";
 import { useAuthStore } from "./useAuthStore";
+import showBigToast from "../components/showBigToast";
 
 export const useMessageStore = create((set) => ({
   messages: [],
+  notifications: [],
   loading: true,
 
   sendMessage: async (receiverId, content) => {
@@ -61,14 +63,36 @@ export const useMessageStore = create((set) => ({
     try {
       socket = getSocket();
     } catch (error) {
-      console.warn("⚠️ No se pudo suscribir: el socket aún no está inicializado: ", error);
+      console.warn("⚠️ Socket no inicializado:", error);
       return;
     }
+
+    socket.off("newMessage");
 
     socket.on("newMessage", ({ message }) => {
       set((state) => ({
         messages: [...state.messages, message],
       }));
+
+      const currentUserId = useAuthStore.getState().authUser?._id;
+      const currentUserName = useAuthStore.getState().authUser?.name;
+
+      if (message.sender !== currentUserId) {
+        set((state) => ({
+          notifications: [
+            ...state.notifications,
+            {
+              id: Date.now(),
+              type: "message",
+              sender: currentUserName,
+              content: message.content,
+            },
+          ],
+        }));
+        showBigToast(
+          `Mensaje enviado de ${currentUserName}: ${message.content}`
+        );
+      }
     });
   },
 
@@ -78,7 +102,22 @@ export const useMessageStore = create((set) => ({
       socket = getSocket();
       socket.off("newMessage");
     } catch (error) {
-      console.warn("⚠️ No se pudo desuscribir: el socket no estaba inicializado: ", error);
+      console.warn(
+        "⚠️ No se pudo desuscribir: el socket no estaba inicializado: ",
+        error
+      );
     }
+  },
+
+  removeNotification: (notificationId) => {
+    set((state) => ({
+      notifications: state.notifications.filter(
+        (notification) => notification.id !== notificationId
+      ),
+    }));
+  },
+
+  clearAllNotifications: () => {
+    set({ notifications: [] });
   },
 }));

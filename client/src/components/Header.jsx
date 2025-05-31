@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Flame, User, LogOut, Menu } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import NotificationBell from "./NotificationBell";
 
 function Header() {
 	const { authUser, logout } = useAuthStore();
@@ -35,6 +36,11 @@ function Header() {
 								Explorar Perfiles
 							</span>
 						</Link>
+						<div className="hidden md:flex items-center space-x-4 ml-10">
+						<NotificationBell />
+
+						</div>
+
 					</div>
 					<div className="hidden md:flex items-center space-x-4">
 						{authUser ? (

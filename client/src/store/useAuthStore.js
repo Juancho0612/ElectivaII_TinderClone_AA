@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { disconnectSocket, initializeSocket } from "../socket/socket.client";
+import { useMessageStore } from "./useMessageStore";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
@@ -11,7 +12,7 @@ export const useAuthStore = create((set) => ({
   signUp: async (data) => {
     try {
       await axiosInstance.post("/auth/signup", data);
-  
+
       toast.success("Usuario creado con éxito", {
         duration: 4000,
         position: "top-right",
@@ -19,12 +20,10 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       let errMsg = "Error al crear el usuario";
       console.log(error);
-      if (
-        error?.response?.data?.message === "El correo eletronico ya existe"
-      ) {
+      if (error?.response?.data?.message === "El correo eletronico ya existe") {
         errMsg = "Este correo ya está registrado";
       }
-  
+
       toast.error(errMsg, {
         duration: 4000,
         position: "top-right",
@@ -33,19 +32,21 @@ export const useAuthStore = create((set) => ({
       set({ loading: false });
     }
   },
-
   login: async (loginData) => {
     try {
       set({ loading: true });
+
       const res = await axiosInstance.post("/auth/login", loginData);
+      const { token, user } = res.data;
 
-      localStorage.setItem("jwt", res.data.token);
+      localStorage.setItem("jwt", token);
+      set({ authUser: user });
 
-      set({ authUser: res.data.user });
-      initializeSocket(res.data.user._id);
+      initializeSocket(user._id);
+
       toast.success("Logged in successfully");
     } catch (error) {
-      toast.error(error.response.data.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       set({ loading: false });
     }
@@ -70,12 +71,11 @@ export const useAuthStore = create((set) => ({
       localStorage.removeItem("jwt");
       disconnectSocket();
       set({ authUser: null });
+      useMessageStore.getState().clearNotifications();
     } catch (error) {
       toast.error(error.response.data.message || "Something went wrong");
     }
   },
-
-  // Dentro de useAuthStore
 
   checkAuth: async () => {
     try {

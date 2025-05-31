@@ -1,5 +1,6 @@
 import Message from "../models/Message.js";
 import { getConnectedUsers, getIO } from "../socket/socket.server.js";
+import { enqueueEmailNotification } from "../queue/emailProducer.js";
 
 /**
  * @function sendMessage
@@ -29,6 +30,13 @@ export const sendMessage = async (req, res) => {
         message: newMessage,
       });
     }
+
+    //pasar info real a la cola --revisar
+     await enqueueEmailNotification("message", {
+      to: "higuta47@gmail.com",  
+      senderName: "prueba aleja",  
+      message: content,
+    });
 
     res.status(201).json({
       success: true,
