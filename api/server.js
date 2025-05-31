@@ -11,6 +11,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 
 import { connectDB } from "./config/db.js";
 import { initializeSocket } from "./socket/socket.server.js";
+import { swaggerSpec, swaggerUi } from "./swagger.js";
 
 dotenv.config();
 
@@ -37,6 +38,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/matches", matchRoutes);
 app.use("/api/messages", messageRoutes);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/client/dist")));
